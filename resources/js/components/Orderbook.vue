@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 
 const props = defineProps({
     initialSymbol: { type: String, default: 'BTC' }
@@ -108,20 +108,30 @@ const fetchOrders = async () => {
 
 watch(selectedSymbol, fetchOrders);
 
+// Listen for local order updates
+const handleOrderUpdated = () => fetchOrders();
+
 onMounted(() => {
     fetchOrders();
 
-    // Listen for real-time updates
+    // Listen for local updates from other components
+    window.addEventListener('order-updated', handleOrderUpdated);
+
+    // Listen for real-time updates via Pusher
     if (window.Echo) {
         window.Echo.channel(`orderbook.${selectedSymbol.value}`)
-            .listen('OrderCreated', (e) => {
+            .listen('.OrderCreated', (e) => {
                 if (e.order.symbol === selectedSymbol.value) {
                     orders.value.push(e.order);
                 }
             })
-            .listen('OrderCancelled', (e) => {
+            .listen('.OrderCancelled', (e) => {
                 orders.value = orders.value.filter(o => o.id !== e.order.id);
             });
     }
+});
+
+onUnmounted(() => {
+    window.removeEventListener('order-updated', handleOrderUpdated);
 });
 </script>

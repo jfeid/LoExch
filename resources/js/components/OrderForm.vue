@@ -141,6 +141,9 @@ const submitOrder = async () => {
         emit('orderCreated', data.order);
         form.value.price = '';
         form.value.amount = '';
+
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new CustomEvent('order-updated'));
     } catch (e) {
         error.value = e.message;
     } finally {

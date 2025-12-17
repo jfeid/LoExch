@@ -5,11 +5,11 @@ namespace App\Events;
 use App\Models\Trade;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderMatched implements ShouldBroadcast
+class OrderMatched implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -45,5 +45,10 @@ class OrderMatched implements ShouldBroadcast
                 'created_at' => $this->trade->created_at->toISOString(),
             ],
         ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'OrderMatched';
     }
 }
