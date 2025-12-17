@@ -37,6 +37,15 @@
                 />
             </div>
 
+            @if(app()->environment('local'))
+                <flux:callout class="mb-4" variant="warning" icon="information-circle">
+                    <flux:callout.heading>Demo Mode</flux:callout.heading>
+                    <flux:callout.text>
+                        Use code <code class="bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 rounded font-mono font-bold">111111</code> to authenticate.
+                    </flux:callout.text>
+                </flux:callout>
+            @endif
+
             <form method="POST" action="{{ route('two-factor.login.store') }}">
                 @csrf
 
