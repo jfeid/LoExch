@@ -100,13 +100,17 @@ class OrderMatchingService
         // Settlement for buyer
         // Buyer already locked: buyOrder.price * amount
         // Needs to pay: volume + buyerFee
-        // Refund: (buyOrder.price * amount) - volume - buyerFee
+        // Refund/Debit: (buyOrder.price * amount) - volume - buyerFee
         $buyerLocked = bcmul($buyOrder->price, $buyOrder->amount, 8);
         $buyerOwes = bcadd($volume, $buyerFee, 8);
         $buyerRefund = bcsub($buyerLocked, $buyerOwes, 8);
 
         if (bccomp($buyerRefund, '0', 8) > 0) {
+            // Buyer locked more than needed, refund the difference
             $buyer->balance = bcadd($buyer->balance, $buyerRefund, 8);
+        } elseif (bccomp($buyerRefund, '0', 8) < 0) {
+            // Buyer locked less than needed (fee exceeds price savings), deduct from balance
+            $buyer->balance = bcadd($buyer->balance, $buyerRefund, 8); // Adding negative = subtracting
         }
         $buyer->save();
 
