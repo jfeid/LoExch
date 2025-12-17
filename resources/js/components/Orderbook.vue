@@ -10,38 +10,38 @@
         </div>
 
         <div class="p-5">
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-2 gap-4">
                 <!-- Buy Orders -->
-                <div>
+                <div class="min-w-0">
                     <div class="flex items-center gap-2 mb-3">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
                         <h4 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Buy Orders</h4>
                     </div>
                     <div class="space-y-2 max-h-64 overflow-y-auto">
                         <div v-for="order in buyOrders" :key="order.id"
-                            class="flex justify-between text-sm bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
-                            <span class="font-semibold text-emerald-700 dark:text-emerald-400">${{ formatNumber(order.price) }}</span>
-                            <span class="text-zinc-600 dark:text-zinc-400 font-medium">{{ formatNumber(order.amount) }}</span>
+                            class="bg-emerald-50 dark:bg-emerald-900/20 px-3 py-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
+                            <div class="text-base font-bold text-emerald-700 dark:text-emerald-400">${{ formatPrice(order.price) }}</div>
+                            <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ formatAmount(order.amount) }} {{ selectedSymbol }}</div>
                         </div>
-                        <div v-if="buyOrders.length === 0" class="text-sm text-zinc-400 dark:text-zinc-500 text-center py-8 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-700">
+                        <div v-if="buyOrders.length === 0" class="text-xs text-zinc-400 dark:text-zinc-500 text-center py-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-700">
                             No buy orders
                         </div>
                     </div>
                 </div>
 
                 <!-- Sell Orders -->
-                <div>
+                <div class="min-w-0">
                     <div class="flex items-center gap-2 mb-3">
-                        <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></div>
                         <h4 class="text-sm font-semibold text-rose-600 dark:text-rose-400">Sell Orders</h4>
                     </div>
                     <div class="space-y-2 max-h-64 overflow-y-auto">
                         <div v-for="order in sellOrders" :key="order.id"
-                            class="flex justify-between text-sm bg-rose-50 dark:bg-rose-900/20 p-3 rounded-lg border border-rose-100 dark:border-rose-900/30">
-                            <span class="font-semibold text-rose-700 dark:text-rose-400">${{ formatNumber(order.price) }}</span>
-                            <span class="text-zinc-600 dark:text-zinc-400 font-medium">{{ formatNumber(order.amount) }}</span>
+                            class="bg-rose-50 dark:bg-rose-900/20 px-3 py-2.5 rounded-lg border border-rose-100 dark:border-rose-900/30">
+                            <div class="text-base font-bold text-rose-700 dark:text-rose-400">${{ formatPrice(order.price) }}</div>
+                            <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ formatAmount(order.amount) }} {{ selectedSymbol }}</div>
                         </div>
-                        <div v-if="sellOrders.length === 0" class="text-sm text-zinc-400 dark:text-zinc-500 text-center py-8 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-700">
+                        <div v-if="sellOrders.length === 0" class="text-xs text-zinc-400 dark:text-zinc-500 text-center py-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-700">
                             No sell orders
                         </div>
                     </div>
@@ -74,8 +74,20 @@ const sellOrders = computed(() => {
         .sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
 });
 
-const formatNumber = (num) => {
-    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 }).format(num);
+const formatPrice = (num) => {
+    const n = parseFloat(num);
+    if (n >= 1000) {
+        return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+    }
+    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+};
+
+const formatAmount = (num) => {
+    const n = parseFloat(num);
+    if (n >= 1) {
+        return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n);
+    }
+    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 }).format(n);
 };
 
 const fetchOrders = async () => {
