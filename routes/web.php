@@ -12,13 +12,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', TradingDashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-
-Route::get('trading', TradingDashboard::class)
-    ->middleware(['auth', 'verified'])
-    ->name('trading');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

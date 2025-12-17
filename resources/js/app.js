@@ -15,18 +15,28 @@ const components = {
     OrderHistory
 };
 
+// Track mounted Vue app instances for cleanup
+const mountedApps = new WeakMap();
+
 // Vue island mounting system
 function mountVueIslands() {
     document.querySelectorAll('[data-vue]').forEach(el => {
+        // Skip if already mounted
+        if (mountedApps.has(el)) {
+            return;
+        }
+
         const componentName = el.dataset.vue;
         const props = el.dataset.props ? JSON.parse(el.dataset.props) : {};
 
         if (components[componentName]) {
-            createApp({
+            const app = createApp({
                 render() {
                     return h(components[componentName], props);
                 }
-            }).mount(el);
+            });
+            app.mount(el);
+            mountedApps.set(el, app);
         }
     });
 }
@@ -37,6 +47,9 @@ if (document.readyState === 'loading') {
 } else {
     mountVueIslands();
 }
+
+// Re-mount after Livewire SPA navigation
+document.addEventListener('livewire:navigated', mountVueIslands);
 
 // Also expose for manual mounting
 window.mountVueIslands = () => mountVueIslands();

@@ -1,6 +1,6 @@
 <div>
     <div class="mb-6">
-        <flux:heading size="xl">Trading Dashboard</flux:heading>
+        <flux:heading size="xl">Dashboard</flux:heading>
         <flux:text class="mt-2 text-zinc-600 dark:text-zinc-400">
             Place orders and monitor the orderbook
         </flux:text>
