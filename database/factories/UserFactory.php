@@ -28,11 +28,22 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'balance' => '10000.00000000',
             'remember_token' => Str::random(10),
             'two_factor_secret' => Str::random(10),
             'two_factor_recovery_codes' => Str::random(10),
             'two_factor_confirmed_at' => now(),
         ];
+    }
+
+    /**
+     * Set a specific USD balance.
+     */
+    public function withBalance(string $balance): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'balance' => $balance,
+        ]);
     }
 
     /**

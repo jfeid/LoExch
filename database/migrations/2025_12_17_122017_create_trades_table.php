@@ -21,7 +21,8 @@ return new class extends Migration
             $table->decimal('price', 18, 8);
             $table->decimal('amount', 18, 8);
             $table->decimal('volume', 18, 8);
-            $table->decimal('fee', 18, 8);
+            $table->decimal('maker_fee', 18, 8);
+            $table->decimal('taker_fee', 18, 8);
             $table->timestamps();
 
             $table->index(['symbol', 'created_at']);

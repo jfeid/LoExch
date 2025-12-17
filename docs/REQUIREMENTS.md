@@ -3,7 +3,7 @@
 ## 1. Backend — Laravel API
 
 ### Required Database Tables
-You must include at least the following tables and columns:
+Include at least the following tables and columns:
 
 - users
   - Default Laravel columns
@@ -16,7 +16,7 @@ You must include at least the following tables and columns:
 - orders
   - `user_id`
   - `symbol`
-  - `side` (`buy`/`sell`)
+  - `side` (`buy` / `sell`)
   - `price` (decimal)
   - `amount` (decimal)
   - `status` (`open = 1`, `filled = 2`, `cancelled = 3`)
@@ -28,23 +28,23 @@ You must include at least the following tables and columns:
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| GET    | `/api/profile` | Returns authenticated user's USD balance + asset balances |
-| GET    | `/api/orders?symbol=BTC` | Returns all open orders for orderbook (both buy & sell) |
-| POST   | `/api/orders` | Creates a limit order |
-| POST   | `/api/orders/{id}/cancel` | Cancels an open order and releases locked USD or assets |
-| POST   | (internal / job) | Matching trigger — matches new orders with the first valid counter order |
+| GET    | `/api/profile` | Return authenticated user's USD balance + asset balances |
+| GET    | `/api/orders?symbol=BTC` | Return all open orders for orderbook (buy & sell) |
+| POST   | `/api/orders` | Create a limit order |
+| POST   | `/api/orders/{id}/cancel` | Cancel an open order and release locked USD or assets |
+| POST   | internal/job | Matching trigger — match new orders with first valid counter order |
 
 ### Core Business Logic
 
 Buy order flow:
-1. Check `users.balance >= amount * price`.
+1. Verify `users.balance >= amount * price`.
 2. Deduct `amount * price` from `users.balance`.
-3. Mark order as `open` and lock the USD value.
+3. Create order with status `open` and lock the USD value.
 
 Sell order flow:
-1. Check `assets.amount >= amount`.
+1. Verify `assets.amount >= amount`.
 2. Move `amount` into `assets.locked_amount`.
-3. Mark order as `open`.
+3. Create order with status `open`.
 
 Matching rules (Full match only — no partial fills required):
 - New BUY → match with first SELL where `sell.price <= buy.price`.
@@ -52,27 +52,31 @@ Matching rules (Full match only — no partial fills required):
 
 Commission (mandatory):
 - Commission = 1.5% of matched USD value.
-- Example: `0.01 BTC @ 95,000 USD => volume = 950 USD`.  
-  Fee = `950 * 0.015 = 14.25 USD`.  
-  USD fee must be deducted from buyer and/or asset fee from seller — choose one consistent approach and document it.
+- Example:
+  ```text
+  0.01 BTC @ 95,000 USD = 950 USD volume
+  Fee = 950 * 0.015 = 14.25 USD
+  ```
+- Decide consistently whether the USD fee is deducted from the buyer or an asset fee from the seller, and document that choice in implementation.
 
 Notes:
 - Atomic execution and race-safety for balances/assets is required.
-- Consider using DB transactions and row-level locking to avoid race conditions.
+- Use DB transactions and row-level locking (SELECT ... FOR UPDATE / Eloquent row locks) to avoid race conditions.
+- Ensure consistent ordering when searching for counter-orders to make matching deterministic.
 
 ---
 
 ## 2. Real-Time Integration (Mandatory)
 
-- On every successful match, broadcast an `OrderMatched` event via Pusher.
-- Deliver events to both parties using private channels: `private-user.{id}`.
-- Front-end must update balances, assets and order lists instantly without refresh.
+- Broadcast an `OrderMatched` event on every successful match.
+- Use Pusher (or configured broadcaster) and private channels: `private-user.{id}` for each party.
+- Frontend must listen and update balances, assets, and order lists instantly.
 
 ---
 
 ## 3. Frontend — Vue.js (Composition API) + Tailwind (latest)
 
-You only need 2 custom screens + auth (login/logout):
+You need two custom screens plus auth (login/logout):
 
 A) Limit Order Form
 - Inputs:
