@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const props = defineProps({
     csrfToken: { type: String, required: true }
@@ -115,8 +115,6 @@ const cancelOrder = async (order) => {
             if (idx !== -1) {
                 orders.value[idx].status = 'cancelled';
             }
-            // Notify other components
-            window.dispatchEvent(new CustomEvent('order-updated'));
         }
     } catch (e) {
         console.error('Failed to cancel order:', e);
@@ -125,29 +123,25 @@ const cancelOrder = async (order) => {
     }
 };
 
-// Listen for local order updates
-const handleOrderUpdated = () => fetchOrders();
-
 onMounted(() => {
     fetchOrders();
-
-    // Listen for local updates from other components
-    window.addEventListener('order-updated', handleOrderUpdated);
 
     // Listen for real-time updates via Pusher
     if (window.Echo) {
         const userId = document.querySelector('meta[name="user-id"]')?.content;
         if (userId) {
             window.Echo.private(`user.${userId}`)
+                .listen('.OrderCreated', () => {
+                    fetchOrders();
+                })
+                .listen('.OrderCancelled', () => {
+                    fetchOrders();
+                })
                 .listen('.OrderMatched', () => {
                     fetchOrders();
                 });
         }
     }
-});
-
-onUnmounted(() => {
-    window.removeEventListener('order-updated', handleOrderUpdated);
 });
 
 // Expose refresh method

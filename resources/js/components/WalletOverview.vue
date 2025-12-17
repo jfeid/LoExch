@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const profile = ref({ balance: '0', assets: [] });
 const loading = ref(true);
@@ -74,29 +74,25 @@ const fetchProfile = async () => {
     }
 };
 
-// Listen for local order updates
-const handleOrderUpdated = () => fetchProfile();
-
 onMounted(() => {
     fetchProfile();
 
-    // Listen for local updates from other components
-    window.addEventListener('order-updated', handleOrderUpdated);
-
-    // Listen for trade matches to update balances via Pusher
+    // Listen for balance changes via Pusher
     if (window.Echo) {
         const userId = document.querySelector('meta[name="user-id"]')?.content;
         if (userId) {
             window.Echo.private(`user.${userId}`)
+                .listen('.OrderCreated', () => {
+                    fetchProfile();
+                })
+                .listen('.OrderCancelled', () => {
+                    fetchProfile();
+                })
                 .listen('.OrderMatched', () => {
                     fetchProfile();
                 });
         }
     }
-});
-
-onUnmounted(() => {
-    window.removeEventListener('order-updated', handleOrderUpdated);
 });
 
 // Expose refresh method for parent components
