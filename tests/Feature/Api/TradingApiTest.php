@@ -83,8 +83,11 @@ class TradingApiTest extends TestCase
             'status' => Order::STATUS_OPEN,
         ]);
 
+        // Volume: $50,000 × 0.1 = $5,000
+        // With fee buffer (1.01): $5,050 locked
+        // Balance: $10,000 - $5,050 = $4,950
         $user->refresh();
-        $this->assertEquals('5000.00000000', $user->balance);
+        $this->assertEquals('4950.00000000', $user->balance);
     }
 
     public function test_create_sell_order(): void

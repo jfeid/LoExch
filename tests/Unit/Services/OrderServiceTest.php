@@ -34,8 +34,11 @@ class OrderServiceTest extends TestCase
         $this->assertEquals('BTC', $order->symbol);
         $this->assertEquals(Order::STATUS_OPEN, $order->status);
 
+        // Volume: $50,000 × 0.1 = $5,000
+        // With fee buffer (1.01): $5,050 locked
+        // Balance: $10,000 - $5,050 = $4,950
         $user->refresh();
-        $this->assertEquals('5000.00000000', $user->balance);
+        $this->assertEquals('4950.00000000', $user->balance);
     }
 
     public function test_create_buy_order_fails_with_insufficient_balance(): void
@@ -85,11 +88,13 @@ class OrderServiceTest extends TestCase
         $user = User::factory()->withBalance('10000.00000000')->create();
         $order = $this->service->createBuyOrder($user, 'BTC', '50000.00000000', '0.10000000');
 
+        // After order: $10,000 - $5,050 (with fee buffer) = $4,950
         $user->refresh();
-        $this->assertEquals('5000.00000000', $user->balance);
+        $this->assertEquals('4950.00000000', $user->balance);
 
         $this->service->cancelOrder($order);
 
+        // After cancel: full refund including fee buffer
         $user->refresh();
         $order->refresh();
 

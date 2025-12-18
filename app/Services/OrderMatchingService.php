@@ -100,19 +100,17 @@ class OrderMatchingService
         $sellerFee = $buyerIsTaker ? $makerFee : $takerFee;
 
         // Settlement for buyer
-        // Buyer already locked: buyOrder.price * amount
+        // Buyer locked: buyOrder.price * amount * 1.01 (includes fee buffer)
         // Needs to pay: volume + buyerFee
-        // Refund/Debit: (buyOrder.price * amount) - volume - buyerFee
-        $buyerLocked = bcmul($buyOrder->price, $buyOrder->amount, 8);
+        // Refund: locked - owed (always positive due to fee buffer)
+        $buyerVolume = bcmul($buyOrder->price, $buyOrder->amount, 8);
+        $buyerLocked = bcmul($buyerVolume, OrderService::FEE_BUFFER_MULTIPLIER, 8);
         $buyerOwes = bcadd($volume, $buyerFee, 8);
         $buyerRefund = bcsub($buyerLocked, $buyerOwes, 8);
 
-        if (bccomp($buyerRefund, '0', 8) > 0) {
-            // Buyer locked more than needed, refund the difference
+        // Refund excess to buyer (should always be positive due to fee buffer)
+        if (bccomp($buyerRefund, '0', 8) != 0) {
             $buyer->balance = bcadd($buyer->balance, $buyerRefund, 8);
-        } elseif (bccomp($buyerRefund, '0', 8) < 0) {
-            // Buyer locked less than needed (fee exceeds price savings), deduct from balance
-            $buyer->balance = bcadd($buyer->balance, $buyerRefund, 8); // Adding negative = subtracting
         }
         $buyer->save();
 

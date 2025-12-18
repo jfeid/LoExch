@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
+    // Fee buffer multiplier: 1 + max fee rate (taker fee 1%)
+    // This ensures sufficient funds are locked to cover worst-case fee scenario
+    public const FEE_BUFFER_MULTIPLIER = '1.01';
+
     /**
      * Create a buy order.
      *
@@ -23,15 +27,17 @@ class OrderService
             // Lock the user row to prevent race conditions
             $user = User::lockForUpdate()->find($user->id);
 
-            // Calculate total cost
-            $totalCost = bcmul($price, $amount, 8);
+            // Calculate total cost including fee buffer
+            // Lock price × amount × 1.01 to cover worst-case taker fee
+            $volume = bcmul($price, $amount, 8);
+            $totalCost = bcmul($volume, self::FEE_BUFFER_MULTIPLIER, 8);
 
             // Verify sufficient balance
             if (bccomp($user->balance, $totalCost, 8) < 0) {
                 throw new InsufficientBalanceException;
             }
 
-            // Deduct balance
+            // Deduct balance (including fee buffer)
             $user->balance = bcsub($user->balance, $totalCost, 8);
             $user->save();
 
@@ -106,10 +112,11 @@ class OrderService
             }
 
             if ($order->isBuy()) {
-                // Release locked USD back to user
+                // Release locked USD back to user (including fee buffer)
                 $user = User::lockForUpdate()->find($order->user_id);
-                $totalCost = bcmul($order->price, $order->amount, 8);
-                $user->balance = bcadd($user->balance, $totalCost, 8);
+                $volume = bcmul($order->price, $order->amount, 8);
+                $totalLocked = bcmul($volume, self::FEE_BUFFER_MULTIPLIER, 8);
+                $user->balance = bcadd($user->balance, $totalLocked, 8);
                 $user->save();
             } else {
                 // Release locked asset back to available
