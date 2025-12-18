@@ -173,6 +173,16 @@ Trade: 0.01 BTC @ $95,000 = $950 volume
 - Taker fee: $950 × 1.0% = $9.50 USD
 - Total fees: $14.25 USD
 
+### Fee Handling
+
+| Party | How Fee is Applied |
+|-------|-------------------|
+| **Buyer** | Fee is added to the cost. Buyer locks `volume × 1.01` upfront to cover worst-case (taker) fee. Excess is refunded at settlement. |
+| **Seller** | Fee is deducted from USD proceeds. Seller receives `volume - fee`. No upfront buffer needed. |
+
+**Why buyers lock extra:**
+Since the trade price and maker/taker role are unknown at order time, buyers lock a 1% fee buffer to guarantee sufficient funds for any scenario. This prevents negative balances when fees exceed price improvements.
+
 ## Testing
 
 Run all tests:
