@@ -59,7 +59,7 @@ function setupOrderMatchedListener() {
     const userId = document.querySelector('meta[name="user-id"]')?.content;
     if (userId && window.Echo) {
         window.Echo.private(`user.${userId}`)
-            .listen('OrderMatched', (event) => {
+            .listen('.OrderMatched', (event) => {
                 const trade = event.trade;
                 const isBuyer = trade.buyer_id == userId;
                 const action = isBuyer ? 'bought' : 'sold';
