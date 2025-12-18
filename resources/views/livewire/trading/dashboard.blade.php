@@ -14,7 +14,7 @@
 
         {{-- Middle column: Orderbook --}}
         <div class="lg:col-span-1">
-            <div data-vue="Orderbook" data-props='@json(['initialSymbol' => 'BTC'])'></div>
+            <div data-vue="Orderbook"></div>
         </div>
 
         {{-- Right column: Wallet --}}
