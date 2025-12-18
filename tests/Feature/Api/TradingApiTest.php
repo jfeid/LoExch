@@ -40,6 +40,13 @@ class TradingApiTest extends TestCase
             ]);
     }
 
+    public function test_orders_requires_authentication(): void
+    {
+        $response = $this->getJson('/api/orders?symbol=BTC');
+
+        $response->assertStatus(401);
+    }
+
     public function test_orders_returns_open_orders(): void
     {
         $user = User::factory()->create();
@@ -155,6 +162,35 @@ class TradingApiTest extends TestCase
         $response = $this->actingAs($other)->postJson("/api/orders/{$order->id}/cancel");
 
         $response->assertStatus(403);
+    }
+
+    public function test_cannot_cancel_filled_order(): void
+    {
+        $user = User::factory()->create();
+        $order = Order::factory()->for($user)->buy()->filled()->create();
+
+        $response = $this->actingAs($user)->postJson("/api/orders/{$order->id}/cancel");
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Only open orders can be cancelled');
+    }
+
+    public function test_cannot_cancel_already_cancelled_order(): void
+    {
+        $user = User::factory()->create();
+        $order = Order::factory()->for($user)->buy()->cancelled()->create();
+
+        $response = $this->actingAs($user)->postJson("/api/orders/{$order->id}/cancel");
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', 'Only open orders can be cancelled');
+    }
+
+    public function test_user_orders_requires_authentication(): void
+    {
+        $response = $this->getJson('/api/user/orders');
+
+        $response->assertStatus(401);
     }
 
     public function test_user_orders_returns_all_orders(): void
