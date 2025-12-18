@@ -12,8 +12,9 @@
             </a>
 
             <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="chart-bar-square" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                <flux:navlist.group :heading="__('Trading')" class="grid">
+                    <flux:navlist.item icon="plus-circle" :href="route('trading.order')" :current="request()->routeIs('trading.order')" wire:navigate>{{ __('Place Order') }}</flux:navlist.item>
+                    <flux:navlist.item icon="chart-bar-square" :href="route('trading.overview')" :current="request()->routeIs('trading.overview')" wire:navigate>{{ __('Overview') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 

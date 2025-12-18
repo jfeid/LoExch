@@ -4,7 +4,8 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\TwoFactor;
-use App\Livewire\Trading\Dashboard as TradingDashboard;
+use App\Livewire\Trading\OrderForm;
+use App\Livewire\Trading\Overview;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -12,9 +13,11 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('dashboard', TradingDashboard::class)
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', fn () => redirect()->route('trading.order'))->name('dashboard');
+    Route::get('order', OrderForm::class)->name('trading.order');
+    Route::get('overview', Overview::class)->name('trading.overview');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
