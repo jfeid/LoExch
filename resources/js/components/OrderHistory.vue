@@ -110,14 +110,23 @@ const cancelOrder = async (order) => {
             credentials: 'same-origin'
         });
 
+        const data = await response.json();
+
         if (response.ok) {
             const idx = orders.value.findIndex(o => o.id === order.id);
             if (idx !== -1) {
                 orders.value[idx].status = 'cancelled';
             }
+            window.toastr.success(
+                `Order cancelled: ${order.side.toUpperCase()} ${order.amount} ${order.symbol} @ $${parseFloat(order.price).toLocaleString()}`,
+                'Order Cancelled'
+            );
+        } else {
+            window.toastr.error(data.message || 'Failed to cancel order', 'Cancel Failed');
         }
     } catch (e) {
         console.error('Failed to cancel order:', e);
+        window.toastr.error('Failed to cancel order', 'Error');
     } finally {
         cancelling.value = null;
     }

@@ -139,10 +139,19 @@ const submitOrder = async () => {
         }
 
         emit('orderCreated', data.order);
+
+        // Show success notification
+        const action = form.value.side === 'buy' ? 'Buy' : 'Sell';
+        window.toastr.success(
+            `${action} order placed: ${form.value.amount} ${form.value.symbol} @ $${parseFloat(form.value.price).toLocaleString()}`,
+            'Order Created'
+        );
+
         form.value.price = '';
         form.value.amount = '';
     } catch (e) {
         error.value = e.message;
+        window.toastr.error(e.message, 'Order Failed');
     } finally {
         loading.value = false;
     }
