@@ -55,7 +55,12 @@ document.addEventListener('livewire:navigated', mountVueIslands);
 window.mountVueIslands = () => mountVueIslands();
 
 // Global OrderMatched listener for toastr notifications
+let orderMatchedListenerSetup = false;
+
 function setupOrderMatchedListener() {
+    // Prevent duplicate listeners
+    if (orderMatchedListenerSetup) return;
+
     const userId = document.querySelector('meta[name="user-id"]')?.content;
     if (userId && window.Echo) {
         window.Echo.private(`user.${userId}`)
@@ -66,6 +71,7 @@ function setupOrderMatchedListener() {
                 const message = `Order matched: You ${action} ${trade.amount} ${trade.symbol} @ $${parseFloat(trade.price).toLocaleString()}`;
                 window.toastr.success(message, 'Trade Executed');
             });
+        orderMatchedListenerSetup = true;
     }
 }
 
@@ -75,6 +81,3 @@ if (document.readyState === 'loading') {
 } else {
     setupOrderMatchedListener();
 }
-
-// Re-setup after Livewire SPA navigation
-document.addEventListener('livewire:navigated', setupOrderMatchedListener);
