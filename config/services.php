@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'internal_job' => [
+        'secret' => env('INTERNAL_JOB_SECRET'),
+    ],
+
 ];

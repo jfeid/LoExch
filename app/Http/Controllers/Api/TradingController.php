@@ -11,7 +11,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\CreateOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\ProfileResource;
-use App\Jobs\ProcessOrderMatching;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
@@ -56,9 +55,6 @@ class TradingController extends Controller
 
             // Broadcast order created
             OrderCreated::dispatch($order);
-
-            // Dispatch matching job
-            ProcessOrderMatching::dispatch($order);
 
             return response()->json([
                 'message' => 'Order created successfully',

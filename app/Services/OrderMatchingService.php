@@ -58,13 +58,15 @@ class OrderMatchingService
             $query->sells()
                 ->where('price', '<=', $takerOrder->price)
                 ->orderBy('price', 'asc') // Best price (lowest) first
-                ->orderBy('created_at', 'asc'); // FIFO for same price
+                ->orderBy('created_at', 'asc') // FIFO for same price
+                ->orderBy('id', 'asc'); // Tiebreaker for same timestamp
         } else {
             // Find buy orders with price >= sell price
             $query->buys()
                 ->where('price', '>=', $takerOrder->price)
                 ->orderBy('price', 'desc') // Best price (highest) first
-                ->orderBy('created_at', 'asc'); // FIFO for same price
+                ->orderBy('created_at', 'asc') // FIFO for same price
+                ->orderBy('id', 'asc'); // Tiebreaker for same timestamp
         }
 
         return $query->first();
