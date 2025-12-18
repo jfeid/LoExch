@@ -5,12 +5,11 @@ namespace App\Jobs;
 use App\Events\OrderMatched;
 use App\Models\Order;
 use App\Services\OrderMatchingService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
 
-class ProcessOrderMatching implements ShouldQueue
+class ProcessOrderMatching
 {
-    use Queueable;
+    use Dispatchable;
 
     public function __construct(public Order $order) {}
 

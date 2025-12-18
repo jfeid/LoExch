@@ -122,6 +122,12 @@ const subscribeToChannel = (symbol) => {
         })
         .listen('.OrderCancelled', (e) => {
             orders.value = orders.value.filter(o => o.id !== e.order.id);
+        })
+        .listen('.OrderMatched', (e) => {
+            // Remove both matched orders from the orderbook
+            orders.value = orders.value.filter(o =>
+                o.id !== e.trade.buy_order_id && o.id !== e.trade.sell_order_id
+            );
         });
 };
 

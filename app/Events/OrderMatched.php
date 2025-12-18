@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Trade;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -16,11 +17,12 @@ class OrderMatched implements ShouldBroadcastNow
     public function __construct(public Trade $trade) {}
 
     /**
-     * @return array<int, PrivateChannel>
+     * @return array<int, Channel|PrivateChannel>
      */
     public function broadcastOn(): array
     {
         return [
+            new Channel('orderbook.'.$this->trade->symbol),
             new PrivateChannel('user.'.$this->trade->buyer_id),
             new PrivateChannel('user.'.$this->trade->seller_id),
         ];
@@ -34,6 +36,8 @@ class OrderMatched implements ShouldBroadcastNow
         return [
             'trade' => [
                 'id' => $this->trade->id,
+                'buy_order_id' => $this->trade->buy_order_id,
+                'sell_order_id' => $this->trade->sell_order_id,
                 'symbol' => $this->trade->symbol,
                 'price' => $this->trade->price,
                 'amount' => $this->trade->amount,
