@@ -21,9 +21,10 @@ class MatchingController extends Controller
         $matchCount = 0;
         $processedOrders = [];
 
-        // Get all open orders, ordered by ID for deterministic FIFO matching
+        // Get all open orders, ordered by date then ID for deterministic FIFO matching
         $openOrders = Order::query()
             ->open()
+            ->latest()
             ->orderBy('id', 'asc')
             ->get();
 
