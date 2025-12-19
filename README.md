@@ -25,7 +25,7 @@ ddev composer setup
 
 Configure Pusher credentials in `.env`, then access the app at https://loexch.ddev.site
 
-**SSL Certificate Warning?** Run `mkcert -install` to trust DDEV's local certificates. See [DDEV SSL documentation](https://ddev.readthedocs.io/en/stable/users/usage/commands/#mkcert).
+**SSL Certificate Warning?** Run `mkcert -install` to trust DDEV's local certificates. See [Configuring Browsers](https://docs.ddev.com/en/stable/users/install/configuring-browsers/).
 
 ## Setup on Host (Alternative)
 
