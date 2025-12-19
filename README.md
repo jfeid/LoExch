@@ -89,7 +89,7 @@ Order matching is triggered externally, not automatically. Use the artisan comma
 
 ```bash
 # DDEV
-ddev exec php artisan orders:match
+ddev artisan orders:match
 
 # Host
 php artisan orders:match
@@ -133,7 +133,7 @@ Both fees are deducted in USD. Buyers lock `volume × 1.01` upfront to cover wor
 
 ```bash
 # DDEV
-ddev exec php artisan test
+ddev artisan test
 
 # Host
 php artisan test
