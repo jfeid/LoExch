@@ -14,7 +14,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', fn () => redirect()->route('trading.order'))->name('dashboard');
+    Route::get('dashboard', fn () => redirect()->route('trading.overview'))->name('dashboard');
     Route::get('order', OrderForm::class)->name('trading.order');
     Route::get('overview', Overview::class)->name('trading.overview');
 });
