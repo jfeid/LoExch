@@ -19,8 +19,8 @@ class DashboardTest extends TestCase
     {
         $this->actingAs($user = User::factory()->create());
 
-        // Dashboard redirects to order page
-        $this->get('/dashboard')->assertRedirect('/order');
+        // Dashboard redirects to overview page
+        $this->get('/dashboard')->assertRedirect('/overview');
         $this->get('/order')->assertStatus(200);
         $this->get('/overview')->assertStatus(200);
     }
