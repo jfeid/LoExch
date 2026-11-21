@@ -14,17 +14,17 @@ A simplified cryptocurrency exchange matching engine built with Laravel and Vue.
 
 ### Landing
 
-![Landing page](docs/screenshots/01-welcome.png)
+![Landing page](docs/screenshots/01-welcome-dark.png)
 
 ### Trading Overview
 Wallet balances (with locked amounts), live orderbook and order history with cancel actions.
 
-![Trading overview](docs/screenshots/04-overview.png)
+![Trading overview](docs/screenshots/04-overview-dark.png)
 
 ### Place Order
 Limit order form with volume and fee preview.
 
-![Place order](docs/screenshots/05-place-order.png)
+![Place order](docs/screenshots/05-place-order-dark.png)
 
 ## Quick Start (DDEV - Recommended)
 
