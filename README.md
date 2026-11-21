@@ -10,6 +10,26 @@ A simplified cryptocurrency exchange matching engine built with Laravel and Vue.
 - **Commission System**: Maker-taker fee model (0.5% maker, 1.0% taker)
 - **Atomic Transactions**: Race-safe balance and asset management
 
+## Screenshots
+
+### Landing
+
+![Landing page](docs/screenshots/01-welcome.png)
+
+### Trading Overview
+Wallet balances (with locked amounts), live orderbook and order history with cancel actions.
+
+![Trading overview](docs/screenshots/04-overview.png)
+
+### Place Order
+Limit order form with volume and fee preview.
+
+![Place order](docs/screenshots/05-place-order.png)
+
+### Dark Mode
+
+![Trading overview in dark mode](docs/screenshots/06-overview-dark.png)
+
 ## Quick Start (DDEV - Recommended)
 
 [DDEV](https://ddev.com/) provides a containerized development environment with all dependencies pre-configured.
