@@ -26,10 +26,6 @@ Limit order form with volume and fee preview.
 
 ![Place order](docs/screenshots/05-place-order.png)
 
-### Dark Mode
-
-![Trading overview in dark mode](docs/screenshots/06-overview-dark.png)
-
 ## Quick Start (DDEV - Recommended)
 
 [DDEV](https://ddev.com/) provides a containerized development environment with all dependencies pre-configured.
