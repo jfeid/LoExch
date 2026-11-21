@@ -14,7 +14,7 @@ A simplified cryptocurrency exchange matching engine built with Laravel and Vue.
 
 ### Landing
 
-![Landing page](docs/screenshots/01-welcome-dark.png)
+![Landing page](docs/screenshots/01-landing-dark.png)
 
 ### Trading Overview
 Wallet balances (with locked amounts), live orderbook and order history with cancel actions.
